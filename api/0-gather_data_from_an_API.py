@@ -44,10 +44,11 @@ def fetch_todo_progress(employee_id: int):
     # define output
     print(f"Employee {user_name} is done with\
         tasks({completed_todos}/{total_todos}):")
-    
+
     for todo in todo_response:
         if todo.get('completed', False):
             print(f"\t {todo.get('title')}")
+
 
 if __name__ == "__main__":
     # Checks if the correct number of command-line arguments is provided
