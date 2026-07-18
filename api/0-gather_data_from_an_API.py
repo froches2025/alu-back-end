@@ -1,13 +1,21 @@
 #!/usr/bin/python3
-""" module document """
+
+"""
+Script to retrieve and display TODO list progress for a given employee
+using a REST API.
+
+Requirements:
+- Use urllib or requests module
+- Accept an integer as a parameter (employee ID)
+- Display progress information in the specified format
+"""
 
 import requests
 import sys
 
 
-def fetch_todo_progress(employee_id: int):
-    """ Fetches and displays TODO list progress for an employee
-    indicated by the given ID.
+def get_employee_todo_progress(employee_id):
+    """ Fetches and displays TODO list progress for a given employee.
 
     Args:
     - employee_id (int): ID of the employee to retrieve TODO list for.
@@ -15,34 +23,37 @@ def fetch_todo_progress(employee_id: int):
     Returns:
     - None
     """
-    # define core url patterns
-    base_url = 'https://jsonplaceholder.typicode.com/'
-    user_info_url = f'{base_url}users/{employee_id}'
-    todo_info_url = f'{base_url}todos?userId={employee_id}'
+    base_url = "https://jsonplaceholder.typicode.com"
+    user_url = "{}/users/{}".format(base_url, employee_id)
+    todos_url = "{}/todos?userId={}".format(base_url, employee_id)
 
-    # fetch user information
-    user_response = requests.get(user_info_url)
-    user_info = user_response.json()
-    user_name = user_info.get('name')
+    # Fetch user information
+    user_response = requests.get(user_url)
+    user_data = user_response.json()
+    employee_name = user_data.get('name')
 
-    # fetch todo info and calculate totals
-    todo_info = requests.get(todo_info_url)
-    todo_response = todo_info.json()
-    total_todos = len(todo_response)
-    completed_todos = sum(todo.get("completed", False)
-                          for todo in todo_response)
+    # Fetch TODO list for the employee
+    todos_response = requests.get(todos_url)
+    todos_data = todos_response.json()
 
-    # define output
-    print(f"Employee {user_name} is done with\
-        tasks({completed_todos}/{total_todos}):")
+    # Calculate progress
+    total_tasks = len(todos_data)
+    completed_tasks = sum(task.get("completed", False) for task in todos_data)
 
-    for todo in todo_response:
-        if todo.get('completed', False):
-            print(f"\t {todo.get('title')}")
+    # Display progress information
+    print("Employee {} is done with tasks ({}/{}):".format(
+        employee_name, completed_tasks, total_tasks), end='\n')
+    # print("{}: {} completed tasks out of {}".format(
+    # employee_name, completed_tasks, total_tasks))
+
+    # Display titles of completed tasks
+    for task in todos_data:
+        if task.get('completed', False):
+            print("\t {}".format(task.get("title")))
 
 
 if __name__ == "__main__":
-    # Checks if the correct number of command-line arguments is provided
+    # Check if the correct number of command-line arguments is provided
     if len(sys.argv) != 2:
         print("Usage: python3 0-gather_data_from_an_API.py <employee_id>")
         sys.exit(1)
@@ -50,5 +61,5 @@ if __name__ == "__main__":
     # Extract employee ID from command-line arguments
     employee_id = int(sys.argv[1])
 
-    # Calling the function to get and display TODO list progress
-    fetch_todo_progress(employee_id)
+    # Call the function to get and display TODO list progress
+    get_employee_todo_progress(employee_id)
