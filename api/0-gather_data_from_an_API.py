@@ -1,13 +1,5 @@
 #!/usr/bin/python3
-"""
-Script to get and display TODO list progress for an employee
-using a REST API.
-
-Requirements:
-- Use urllib or requests module
-- Accept an integer as a parameter (employee ID)
-- Display progress information in the specified format
-"""
+""" module document """
 
 import requests
 import sys
